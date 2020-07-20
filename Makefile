@@ -1,26 +1,18 @@
-run6:
-	DAGSTER_VERSION=0.8.6 DAGSTER_PORT=9091 docker-compose -p dagster-0.8.6 up --build
-.PHONY: run6
+run_good:
+	VARIANT=good DAGSTER_PORT=9091 docker-compose -p dagster-good up --build
+.PHONY: run_good
 
-monitor6:
-	docker exec -it dagster-086_postgres_1 bash -c 'while true; do psql -U postgres -d postgres -t -c "SELECT sum(numbackends) FROM pg_stat_database;"; sleep 2; done'
-.PHONY: monitor6
+monitor_good:
+	docker exec -it dagster-good_postgres_1 bash -c 'while true; do psql -U postgres -d postgres -t -c "SELECT sum(numbackends) FROM pg_stat_database;"; sleep 2; done'
+.PHONY: monitor_good
 
-run7:
-	DAGSTER_VERSION=0.8.7 DAGSTER_PORT=9092 docker-compose -p dagster-0.8.7 up --build
+run_bad:
+	VARIANT=bad DAGSTER_PORT=9092 docker-compose -p dagster-bad up --build
 .PHONY: run7
 
-monitor7:
-	docker exec -it dagster-087_postgres_1 bash -c 'while true; do psql -U postgres -d postgres -t -c "SELECT sum(numbackends) FROM pg_stat_database;"; sleep 2; done'
+monitor_bad:
+	docker exec -it dagster-bad_postgres_1 bash -c 'while true; do psql -U postgres -d postgres -t -c "SELECT sum(numbackends) FROM pg_stat_database;"; sleep 2; done'
 .PHONY: monitor7
-
-run8:
-	DAGSTER_VERSION=0.8.8 DAGSTER_PORT=9093 docker-compose -p dagster-0.8.8 up --build
-.PHONY: run8
-
-monitor8:
-	docker exec -it dagster-088_postgres_1 bash -c 'while true; do psql -U postgres -d postgres -t -c "SELECT sum(numbackends) FROM pg_stat_database;"; sleep 2; done'
-.PHONY: monitor8
 
 clean_dagster:
 	docker-compose kill postgres

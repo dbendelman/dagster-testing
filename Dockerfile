@@ -1,5 +1,5 @@
 FROM python:3.7.7
-ARG DAGSTER_VERSION
+ARG VARIANT
 
 RUN apt-get update -qq
 RUN apt-get install -qqy libpq-dev
@@ -7,9 +7,9 @@ RUN apt-get install -qqy libpq-dev
 WORKDIR /src
 ENV PYTHONPATH /src
 
-COPY requirements-${DAGSTER_VERSION}.txt .
+COPY requirements-${VARIANT}.txt .
 RUN set -ex; \
-    pip install --no-cache-dir -r requirements-${DAGSTER_VERSION}.txt; \
+    pip install --no-cache-dir -r requirements-${VARIANT}.txt; \
     rm -rf /root/.cache
 
 COPY . .

@@ -1,0 +1,5 @@
+dagster @ git+https://github.com/dagster-io/dagster.git@27f04dc875572e8af809d24343ebc613914e4507#egg=dagster&subdirectory=python_modules/dagster
+dagit==0.8.6
+dagster-postgres @ git+https://github.com/dagster-io/dagster.git@27f04dc875572e8af809d24343ebc613914e4507#egg=dagster-postgres&subdirectory=python_modules/libraries/dagster-postgres
+dagster-celery @ git+https://github.com/dagster-io/dagster.git@27f04dc875572e8af809d24343ebc613914e4507#egg=dagster-celery&subdirectory=python_modules/libraries/dagster-celery
+redis

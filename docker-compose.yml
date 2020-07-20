@@ -24,7 +24,7 @@ services:
     build:
       context: .
       args:
-        DAGSTER_VERSION: ${DAGSTER_VERSION}
+        VARIANT: ${VARIANT}
     command: dagster-celery worker start --app=dagster_celery.app --includes=pipelines -q dagster
     environment:
       CELERY_BROKER_URL: redis://redis:6379/0
@@ -34,14 +34,14 @@ services:
     networks:
       - dagster
     volumes:
-      - ./tmp/dagster-${DAGSTER_VERSION}:/src/tmp/dagster
+      - ./tmp/dagster-${VARIANT}:/src/tmp/dagster
 
   dagster:
     image: dagster-testing
     build:
       context: .
       args:
-        DAGSTER_VERSION: ${DAGSTER_VERSION}
+        VARIANT: ${VARIANT}
     command: sh -c "cp pipelines/dagster.yaml tmp/dagster/ && dagit -h 0.0.0.0 -p 9090 -w pipelines/workspace.yaml"
     stop_signal: SIGINT
     environment:
@@ -58,7 +58,7 @@ services:
     networks:
       - dagster
     volumes:
-      - ./tmp/dagster-${DAGSTER_VERSION}:/src/tmp/dagster
+      - ./tmp/dagster-${VARIANT}:/src/tmp/dagster
 
 networks:
   dagster:
