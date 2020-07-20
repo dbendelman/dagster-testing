@@ -1,0 +1,65 @@
+version: '3.1'
+
+services:
+
+  postgres:
+    image: postgres:11.2-alpine
+    environment:
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 5432
+    networks:
+      - dagster
+
+  redis:
+    image: redis:5.0.3-alpine3.9
+    command: redis-server
+    ports:
+      - 6379
+    networks:
+      - dagster
+
+  celery:
+    image: dagster-testing
+    build:
+      context: .
+      args:
+        DAGSTER_VERSION: ${DAGSTER_VERSION}
+    command: dagster-celery worker start --app=dagster_celery.app --includes=pipelines -q dagster
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND_URL: redis://redis:6379/1
+    depends_on:
+      - redis
+    networks:
+      - dagster
+    volumes:
+      - ./tmp/dagster-${DAGSTER_VERSION}:/src/tmp/dagster
+
+  dagster:
+    image: dagster-testing
+    build:
+      context: .
+      args:
+        DAGSTER_VERSION: ${DAGSTER_VERSION}
+    command: sh -c "cp pipelines/dagster.yaml tmp/dagster/ && dagit -h 0.0.0.0 -p 9090 -w pipelines/workspace.yaml"
+    stop_signal: SIGINT
+    environment:
+      DAGSTER_HOME: /src/tmp/dagster
+      DAGSTER_HOST: localhost
+      DAGSTER_PORT: 9090
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND_URL: redis://redis:6379/1
+    depends_on:
+      - postgres
+      - celery
+    ports:
+      - ${DAGSTER_PORT}:9090
+    networks:
+      - dagster
+    volumes:
+      - ./tmp/dagster-${DAGSTER_VERSION}:/src/tmp/dagster
+
+networks:
+  dagster:
+    driver: bridge
